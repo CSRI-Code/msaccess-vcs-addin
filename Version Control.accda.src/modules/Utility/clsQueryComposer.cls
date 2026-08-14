@@ -2199,6 +2199,14 @@ Private Sub ParseFieldList(strFields As String)
         If lngAs > 0 Then
             strAlias = Trim$(Mid$(strField, lngAs + 4))
             strField = Trim$(Left$(strField, lngAs - 1))
+			
+            ' TK Mod
+            Debug.Print (strAlias)
+            strAlias = Replace(strAlias, "[""", "[")
+            Debug.Print (strAlias)
+            strAlias = Replace(strAlias, """]", "]")
+            Debug.Print (strAlias)
+			
             ' Remove brackets from alias if present
             If Left$(strAlias, 1) = "[" And Right$(strAlias, 1) = "]" Then
                 strAlias = Mid$(strAlias, 2, Len(strAlias) - 2)
