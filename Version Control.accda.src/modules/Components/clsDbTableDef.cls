@@ -452,11 +452,11 @@ Public Sub SaveTableSqlDef(strTable As String, strFolder As String)
     Set tdf = dbs.TableDefs(strTable)
 
     With cData
-        .Add "CREATE TABLE [", DblQ(strTable), "] (", vbCrLf
+        .Add "CREATE TABLE [", strTable, "] (", vbCrLf
 
         ' Loop through fields
         For Each fld In tdf.Fields
-            .Add "  [", DblQ(fld.Name), "] "
+            .Add "  [", fld.Name, "] "
             If (fld.Attributes And dbAutoIncrField) Then
                 .Add "AUTOINCREMENT"
             Else
@@ -475,7 +475,7 @@ Public Sub SaveTableSqlDef(strTable As String, strFolder As String)
                     If idx.Unique Then cAttr.Add " UNIQUE"
                     If idx.Required Then cAttr.Add " NOT NULL"
                     If idx.Foreign Then AddFieldReferences dbs, idx.Fields, strTable, cAttr
-                    If Len(cAttr.GetStr) > 0 Then .Add " CONSTRAINT [", DblQ(idx.Name), "]"
+                    If Len(cAttr.GetStr) > 0 Then .Add " CONSTRAINT [", idx.Name, "]"
                 End If
                 .Add cAttr.GetStr
             Next
@@ -490,9 +490,9 @@ Public Sub SaveTableSqlDef(strTable As String, strFolder As String)
                 If idx.Fields.Count > 1 Then
                     If Len(cAttr.GetStr) = 0 Then cAttr.Add " CONSTRAINT "
                     If idx.Primary Then
-                        cAttr.Add "[", DblQ(idx.Name), "] PRIMARY KEY ("
+                        cAttr.Add "[", idx.Name, "] PRIMARY KEY ("
                         For Each fld In idx.Fields
-                            cAttr.Add "[", DblQ(fld.Name), "], "
+                            cAttr.Add "[", fld.Name, "], "
                         Next fld
                         cAttr.Remove 2
                         cAttr.Add ")"
@@ -536,9 +536,9 @@ Private Sub AddFieldReferences(dbs As Database, fld As Object, strTable As Strin
             If FieldsIdentical(fld, rel.Fields) Then
 
                 ' References
-                cData.Add " REFERENCES [", DblQ(rel.Table), "] ("
+                cData.Add " REFERENCES [", rel.Table, "] ("
                 For Each fld2 In rel.Fields
-                    cData.Add "[", DblQ(fld2.Name), "],"
+                    cData.Add "[", fld2.Name, "],"
                 Next fld2
                 ' Remove trailing comma
                 If rel.Fields.Count > 0 Then cData.Remove 1
@@ -809,7 +809,7 @@ Private Function ImportLinkedTable(strFile As String) As Boolean
             ' Check for a primary key index (Linked SQL tables may bring over the index, but linked views won't.)
             If dItem.Exists("PrimaryKey") And Not HasUniqueIndex(tdf) Then
                 ' Create a pseudo index on the linked table
-                strSql = "CREATE UNIQUE INDEX __uniqueindex ON [" & DblQ(tdf.Name) & "] (" & dItem("PrimaryKey") & ") WITH PRIMARY"
+                strSql = "CREATE UNIQUE INDEX __uniqueindex ON [" & tdf.Name & "] (" & dItem("PrimaryKey") & ") WITH PRIMARY"
                 dbs.Execute strSql, dbFailOnError
                 dbs.TableDefs.Refresh
             End If
