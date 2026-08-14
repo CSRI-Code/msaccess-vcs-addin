@@ -3657,7 +3657,7 @@ Private Sub EmitColumnBlock(cOut As clsConcat, dColumns As Dictionary)
         Dim dCol As Dictionary
         Set dCol = dColumns(varCol)
         cOut.Add "    Begin", vbCrLf
-        cOut.Add "        dbText ""Name"" =""" & CStr(varCol) & """", vbCrLf
+        cOut.Add "        dbText ""Name"" =""" & DblQ(CStr(varCol)) & """", vbCrLf
 
         ' Emit properties in stored order, holding AggregateType for last
         For Each varProp In dCol.Keys
